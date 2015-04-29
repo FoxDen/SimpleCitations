@@ -8,7 +8,7 @@ import javax.swing.SpringLayout;
 /*
  ***************************TO DO***************************
  *add tooltips
- *Create the worker class
+ *Find out why two types are being output.
  *add comments
  ***********************************************************
  */
@@ -29,6 +29,7 @@ public class bookClass {
 	private JLabel date;
 	private JLabel year;
 	private JLabel city;
+
 	
 	private final String type;	
 	private String storage = "";
@@ -45,9 +46,11 @@ public class bookClass {
 	public JTextField publishYear;
 	public JTextField publishDate;
 	public JTextField editorTranslator;
-	public JTextField pageNum;
 	public JTextField journalV;
 	public JTextField journalN;
+	
+	JLabel pageNumber = new JLabel("Pages");
+	JTextField pageNum = new JTextField("i", 5);
 	
 	SpringLayout spring = new SpringLayout();
 
@@ -68,11 +71,11 @@ public class bookClass {
 		year = new JLabel("Year");
 		publishYear = new JTextField("1999", 4);
 		
-		title = new JTextField(type,FIELDLENGTH);
+		title = new JTextField(getType(),FIELDLENGTH);
 		publisherName = new JTextField("e",FIELDLENGTH);
 		URLText = new JTextField("h",FIELDLENGTH);
 		URL = new JLabel("URL");
-		pageNum = new JTextField("i", 5);
+		
 
 				
 		bookBase.add(fName);
@@ -87,7 +90,7 @@ public class bookClass {
 		titleOfArticle = new JLabel("Chapter");
 		articleTitle = new JTextField("Article",FIELDLENGTH);
 		
-		if(type == "Online Journal" || type == "Offline Journal"){
+		if(getType() == "Online Journal" || getType() == "Offline Journal"){
 			journalVolume = new JLabel("Vol.");
 			titleOfBook.setText("Journal");
 			journalNumber = new JLabel("Number");
@@ -106,7 +109,7 @@ public class bookClass {
 			bookBase.add(date);
 			bookBase.add(publishDate);
 			
-			if(type == "Online Journal"){
+			if(getType() == "Online Journal"){
 				bookBase.add(URL);
 				bookBase.add(URLText);
 				
@@ -116,7 +119,7 @@ public class bookClass {
 
 		} 
 		
-		if(type == "Chapter In Book" || type == "Book" || type == "Book with Editor/Translator" || type == "Encyclopedia"){
+		if(getType() == "Chapter In Book" || getType() == "Book" || getType() == "Book with Editor/Translator" || getType() == "Encyclopedia"){
 			publisher = new JLabel("Publisher");
 			city = new JLabel("City");
 			publishCity = new JTextField("City", FIELDLENGTH);
@@ -126,7 +129,8 @@ public class bookClass {
 			bookBase.add(publisher);
 			bookBase.add(city);
 			storage+="b ";
-			if(type == "Book with Editor/Translator"){
+			
+			if(getType() == "Book with Editor/Translator"){
 				editorOrTranslator = new JLabel("Editor/Translator");
 				editorTranslator = new JTextField("",FIELDLENGTH);
 				
@@ -136,7 +140,7 @@ public class bookClass {
 				storage+="e ";
 			} 
 			
-			if (type == "Chapter In Book"){
+			if (getType() == "Chapter In Book"){
 				bookBase.add(titleOfArticle);
 				articleTitle = new JTextField("g",FIELDLENGTH);
 				bookBase.add(articleTitle);
@@ -144,14 +148,16 @@ public class bookClass {
 				storage+="a ";
 			}
 			
-			if (type == "Encyclopedia"){
+			if (getType() == "Encyclopedia"){
 				titleOfBook.setText("Encyclopedia");
 				
 				storage+="a ";
 			}
+			
+
 		} 
 		
-		if (type == "Newspaper" || type == "Website"){
+		if (getType() == "Newspaper" || getType() == "Website"){
 			bookBase.add(URL);
 			bookBase.add(URLText);
 			bookBase.add(titleOfArticle);
@@ -159,7 +165,7 @@ public class bookClass {
 			articleTitle = new JTextField("g",FIELDLENGTH);
 			bookBase.add(articleTitle);
 			
-			titleOfBook.setText((type=="Newspaper")? "Newspaper":"Website");
+			titleOfBook.setText((getType()=="Newspaper")? "Newspaper":"Website");
 			
 			publishDate = new JTextField("",10);
 			date = new JLabel("Published On");
@@ -187,7 +193,7 @@ public class bookClass {
 		spring.putConstraint(SpringLayout.WEST, year, 400, SpringLayout.WEST, author);		
 		spring.putConstraint(SpringLayout.SOUTH, publishYear, 20, SpringLayout.SOUTH, author);
 		spring.putConstraint(SpringLayout.WEST, publishYear, 400, SpringLayout.WEST, author);
-
+		
 
 		if(storage.contains("b")){ //sets up book component
 			spring.putConstraint(SpringLayout.SOUTH, publisher, 60, SpringLayout.WEST, author);
@@ -202,7 +208,6 @@ public class bookClass {
 			spring.putConstraint(SpringLayout.WEST, publishCity, 370, SpringLayout.WEST, author);
 
 		}  
-		
 
 		if(storage.contains("v")){ //sets up volume and number component
 		
@@ -216,7 +221,6 @@ public class bookClass {
 			spring.putConstraint(SpringLayout.SOUTH, journalN, 65, SpringLayout.SOUTH, author);
 			spring.putConstraint(SpringLayout.WEST, journalN, 240, SpringLayout.WEST, author);
 			
-			//setUpPageNum();
 		} 
 		
 		if (storage.contains("a")){ //sets up article title component
@@ -244,19 +248,73 @@ public class bookClass {
 			spring.putConstraint(SpringLayout.SOUTH, URLText, 170, SpringLayout.WEST, author);
 			spring.putConstraint(SpringLayout.WEST, URLText, 10, SpringLayout.WEST, author);
 		}
+		
 	}
 		
-	public void setUppageNum(){
-		bookBase.add(pageNum);
-		bookBase.add(new JLabel("Page Numbers"));
-		spring.putConstraint(SpringLayout.SOUTH, pageNum, 155, SpringLayout.SOUTH, author);
-		spring.putConstraint(SpringLayout.WEST, pageNum, 300, SpringLayout.WEST, author);
+	public void clear(){
+		fName.setText("");
+		mInit.setText("");
+		lName.setText("");
+		title.setText("");
+		publishYear.setText("");
+		
+		if(storage.contains("b")){
+			publisherName.setText("");
+			publishCity.setText("");
+		}
+		
+		if(storage.contains("v")){
+			journalV.setText("");
+			journalN.setText("");
+		}
+		
+		if(storage.contains("a")){
+			articleTitle.setText("");
+		}
+		
+		if(storage.contains("d")){
+			publishDate.setText("");
+		}
+		
+		if(storage.contains("e")){
+			editorOrTranslator.setText("");
+		}
+		
+		if(storage.contains("u")){
+			URLText.setText("");
+		}
 	}
+	
+	public void setUppageNum(){
+			bookBase.add(pageNum);
+			bookBase.add(pageNumber);
+		
+			spring.putConstraint(SpringLayout.SOUTH, pageNum, 125, SpringLayout.WEST, author);
+			spring.putConstraint(SpringLayout.WEST, pageNum, 190, SpringLayout.WEST, author);
+		
+			spring.putConstraint(SpringLayout.SOUTH, pageNumber, 105, SpringLayout.WEST, author);
+			spring.putConstraint(SpringLayout.WEST, pageNumber, 190, SpringLayout.WEST, author);
+		}
+	public void removepageNum(){
+
+			bookBase.remove(pageNum);
+			bookBase.remove(pageNumber);
+	}
+	
 	
 	public JPanel returnJPanel(String s){
 		bookComponents();
 		bookBaseSetUp();
 		return bookBase;
 	}
+
+	public String getType() {
+		return type;
+	}
 	
+	public String generateCitation(){
+		String cite = "";
+		
+		return cite;
+	}
 }

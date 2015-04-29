@@ -1,6 +1,12 @@
 import javax.swing.*;
 
-import java.awt.*;
+import java.awt.CardLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Scanner;
@@ -28,7 +34,6 @@ public class ChicagoCitationGUI implements ItemListener{
 	private JPanel newspaperPanel;
 	private JPanel onlineJournalPanel;
 	private JPanel offlineJournalPanel;
-	private JPanel interviewsPanel;
 	private JPanel encyclopediaPanel;
 	private JPanel websitePanel;
 	
@@ -37,11 +42,12 @@ public class ChicagoCitationGUI implements ItemListener{
 	private bookClass encyclopedia = new bookClass(ENCYCLOPEDIA);
 	private bookClass website = new bookClass(WEBSITE);
 	private bookClass newspaper = new bookClass(NEWSPAPER);
-
 	
-	//private JTextField pageNo;
+	private static String currType = "Test";
+	CardLayout cl = new CardLayout();
+	
 	private JTextArea output;
-	private JLabel pageNumber;
+	//private JLabel pageNumber;
 
 	
 	JCheckBox isFootnote;
@@ -50,10 +56,10 @@ public class ChicagoCitationGUI implements ItemListener{
 	
 	Scanner scanInput;
 	
-	
-	//JPanel card;
 	final static String BUTTONPANEL = "Card with JButtons";
     final static String TEXTPANEL = "Card with JTextField";
+    
+    
 	public void addComponent(Container container){
 		JPanel citationBoxPane = new JPanel();
 		JPanel bottomBit = new JPanel(new FlowLayout());
@@ -61,6 +67,7 @@ public class ChicagoCitationGUI implements ItemListener{
 		JPanel Bb = new JPanel(new BorderLayout());
 		
 		String citationItems[] = {BOOK, CHAPTER, EDITOR, ONLINEJOURNAL, OFFLINEJOURNAL, WEBSITE, ENCYCLOPEDIA, NEWSPAPER};
+
 		JComboBox<String> cb = new JComboBox<String>(citationItems);
 		cb.setEditable(false);
 		cb.addItemListener(this);
@@ -78,8 +85,65 @@ public class ChicagoCitationGUI implements ItemListener{
 		bB.add(output);
 		Bb.add(bB,BorderLayout.PAGE_START);
 		Bb.add(bottomBit,BorderLayout.PAGE_END);
-
 		
+		clear.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				book.clear();
+				chapter.clear();
+				editors.clear();
+				onJournal.clear();
+				offJournal.clear();
+				encyclopedia.clear();
+				website.clear();
+				newspaper.clear();
+			}
+
+		});
+		
+		isFootnote.addItemListener(new ItemListener(){
+
+			public void itemStateChanged(ItemEvent e) {
+				if(e.getStateChange()==ItemEvent.SELECTED)
+				{
+					book.setUppageNum();
+					chapter.setUppageNum();
+					editors.setUppageNum();
+					onJournal.setUppageNum();
+					offJournal.setUppageNum();
+					encyclopedia.setUppageNum();
+					website.setUppageNum();
+					newspaper.setUppageNum();
+	
+				} 
+				if(e.getStateChange()==ItemEvent.DESELECTED)
+				{
+					book.removepageNum();
+					chapter.removepageNum();
+					editors.removepageNum();
+					onJournal.removepageNum();
+					offJournal.removepageNum();
+					encyclopedia.removepageNum();
+					website.removepageNum();
+					newspaper.removepageNum();
+
+				}
+				}
+				
+
+			
+		});
+		
+		generate.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// Need to figure out why the getItem isn't working correctly.
+				
+			}
+			
+		});
+
+		bookPanel = book.returnJPanel(BOOK);
 		booksWithEditorsPanel = editors.returnJPanel(CHAPTER);
 		bookChaptersPanel = chapter.returnJPanel(EDITOR);
 		onlineJournalPanel = onJournal.returnJPanel(ONLINEJOURNAL);
@@ -87,38 +151,30 @@ public class ChicagoCitationGUI implements ItemListener{
 		encyclopediaPanel = encyclopedia.returnJPanel(ENCYCLOPEDIA);
 		websitePanel = website.returnJPanel(WEBSITE);
 		newspaperPanel = newspaper.returnJPanel(NEWSPAPER);
-		bookPanel = book.returnJPanel(BOOK);
-		
 
-		citationTypes = new JPanel(new CardLayout());
-		citationTypes.add(onlineJournalPanel, ONLINEJOURNAL);
-		citationTypes.add(offlineJournalPanel, OFFLINEJOURNAL);
-		citationTypes.add(encyclopediaPanel, ENCYCLOPEDIA);
-		citationTypes.add(websitePanel, WEBSITE);
+		citationTypes = new JPanel(cl);
 		citationTypes.add(bookPanel, BOOK);
 		citationTypes.add(bookChaptersPanel, CHAPTER);
 		citationTypes.add(booksWithEditorsPanel, EDITOR);
+		citationTypes.add(onlineJournalPanel, ONLINEJOURNAL);
+		citationTypes.add(offlineJournalPanel, OFFLINEJOURNAL);
+		citationTypes.add(websitePanel, WEBSITE);
+		citationTypes.add(encyclopediaPanel, ENCYCLOPEDIA);
 		citationTypes.add(newspaperPanel, NEWSPAPER);
-
 		
 		container.add(citationBoxPane, BorderLayout.PAGE_START);
 		container.add(citationTypes, BorderLayout.CENTER);
 		container.add(Bb, BorderLayout.PAGE_END);
-
 	}
-	
-	public void outputCitations(){
-		
-	}
-	
 
 	@Override
 	public void itemStateChanged(ItemEvent event) {
-		CardLayout cl = (CardLayout)(citationTypes.getLayout());
-		cl.show(citationTypes, (String)event.getItem());
-		
+		cl = (CardLayout) citationTypes.getLayout();
+		cl.show(citationTypes, (String) event.getItem());
 	}
 	
+
+
 	   private static void createAndShowGUI() {
 	        //Create and set up the window.
 	        JFrame frame = new JFrame("Bibliography Demo");
@@ -134,12 +190,14 @@ public class ChicagoCitationGUI implements ItemListener{
 	        frame.pack();
 	        frame.setVisible(true);
 	    }
-	     
+
 	    public static void main(String[] args) {
 	        /* Use an appropriate Look and Feel */
 	        try {
 	            //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 	            UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+
+
 	        } catch (UnsupportedLookAndFeelException ex) {
 	            ex.printStackTrace();
 	        } catch (IllegalAccessException ex) {
