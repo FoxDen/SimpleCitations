@@ -1,5 +1,4 @@
 import javax.swing.*;
-
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -9,70 +8,62 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.Scanner;
 
 public class ChicagoCitationGUI implements ItemListener{
 	public final static int FIELDLENGTH = 20;
-	final static String BOOK = "Book";
-	final static String CHAPTER = "Chapter In Book";
-	final static String EDITOR = "Book with Editor/Translator";
-	final static String NEWSPAPER =	"Newspaper"; 
-	final static String OFFLINEJOURNAL = "Offline Journal";
-	final static String ONLINEJOURNAL = "Online Journal";
-	final static String ENCYCLOPEDIA = "Encyclopedia";
-	final static String WEBSITE = "Website";
+	public final static String BOOK = "Book";
+	public final static String CHAPTER = "Chapter In Book";
+	public final static String EDITOR = "Book with Editor/Translator";
+	public final static String NEWSPAPER =	"Newspaper"; 
+	public final static String OFFLINEJOURNAL = "Offline Journal";
+	public final static String ONLINEJOURNAL = "Online Journal";
+	public final static String ENCYCLOPEDIA = "Encyclopedia";
+	public final static String WEBSITE = "Website";
 		
 	private JPanel citationTypes;
 	private JPanel bookPanel;
 	private JPanel booksWithEditorsPanel;
-	private JPanel bookChaptersPanel;
-	
-	private bookClass book = new bookClass(BOOK);
-	private bookClass chapter = new bookClass(CHAPTER);
-	private bookClass editors = new bookClass(EDITOR);
-		
+	private JPanel bookChaptersPanel;	
 	private JPanel newspaperPanel;
 	private JPanel onlineJournalPanel;
 	private JPanel offlineJournalPanel;
 	private JPanel encyclopediaPanel;
 	private JPanel websitePanel;
 	
+	private bookClass book = new bookClass(BOOK);
+	private bookClass chapter = new bookClass(CHAPTER);
+	private bookClass editors = new bookClass(EDITOR);
 	private bookClass onJournal = new bookClass(ONLINEJOURNAL);
 	private bookClass offJournal = new bookClass(OFFLINEJOURNAL);
 	private bookClass encyclopedia = new bookClass(ENCYCLOPEDIA);
 	private bookClass website = new bookClass(WEBSITE);
 	private bookClass newspaper = new bookClass(NEWSPAPER);
-	
-	private static String currType = "Test";
-	CardLayout cl = new CardLayout();
-	
-	private JTextArea output;
-	//private JLabel pageNumber;
+	private final bookClass[] storage = {book, chapter, editors, onJournal, offJournal, website, encyclopedia, newspaper}; //simply to act for the while loop.
 
+	private static String currType = "";
+	private CardLayout cl = new CardLayout();
+	private JComboBox<String> cb; 
 	
-	JCheckBox isFootnote;
-	JButton generate;
-	JButton clear;
-	
-	Scanner scanInput;
-	
-	final static String BUTTONPANEL = "Card with JButtons";
-    final static String TEXTPANEL = "Card with JTextField";
-    
-    
+	private JTextArea output;	
+	private JCheckBox isFootnote;
+	private JButton generate;
+	private JButton clear;
+	    
+	/**
+	 * 
+	 * @param container
+	 */
 	public void addComponent(Container container){
 		JPanel citationBoxPane = new JPanel();
 		JPanel bottomBit = new JPanel(new FlowLayout());
 		JPanel bB = new JPanel();
-		JPanel Bb = new JPanel(new BorderLayout());
-		
-		String citationItems[] = {BOOK, CHAPTER, EDITOR, ONLINEJOURNAL, OFFLINEJOURNAL, WEBSITE, ENCYCLOPEDIA, NEWSPAPER};
+		JPanel Bb = new JPanel(new BorderLayout());		
 
-		JComboBox<String> cb = new JComboBox<String>(citationItems);
+		String citationItems[] = {BOOK, CHAPTER, EDITOR, ONLINEJOURNAL, OFFLINEJOURNAL, WEBSITE, ENCYCLOPEDIA, NEWSPAPER};
+		cb = new JComboBox<String>(citationItems);
 		cb.setEditable(false);
 		cb.addItemListener(this);
 		citationBoxPane.add(cb);
-
 		
 		isFootnote = new JCheckBox("Is this a footnote?");
 		generate = new JButton("Generate");
@@ -86,61 +77,67 @@ public class ChicagoCitationGUI implements ItemListener{
 		Bb.add(bB,BorderLayout.PAGE_START);
 		Bb.add(bottomBit,BorderLayout.PAGE_END);
 		
+		/**
+		 * 
+		 */
 		clear.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				book.clear();
-				chapter.clear();
-				editors.clear();
-				onJournal.clear();
-				offJournal.clear();
-				encyclopedia.clear();
-				website.clear();
-				newspaper.clear();
+				int i = 0;
+				
+				while(i<storage.length){
+					storage[i].clear();
+					i++;
+				}
+				System.out.println(currType);
 			}
 
 		});
 		
+		/**
+		 * 
+		 */
 		isFootnote.addItemListener(new ItemListener(){
 
 			public void itemStateChanged(ItemEvent e) {
 				if(e.getStateChange()==ItemEvent.SELECTED)
 				{
-					book.setUppageNum();
-					chapter.setUppageNum();
-					editors.setUppageNum();
-					onJournal.setUppageNum();
-					offJournal.setUppageNum();
-					encyclopedia.setUppageNum();
-					website.setUppageNum();
-					newspaper.setUppageNum();
-	
-				} 
+					int i = 0;
+					
+					while(i<storage.length){
+						storage[i].setUppageNum();
+						i++;
+					}
+				}
+ 
 				if(e.getStateChange()==ItemEvent.DESELECTED)
 				{
-					book.removepageNum();
-					chapter.removepageNum();
-					editors.removepageNum();
-					onJournal.removepageNum();
-					offJournal.removepageNum();
-					encyclopedia.removepageNum();
-					website.removepageNum();
-					newspaper.removepageNum();
-
+					int i = 0;
+					
+					while(i<storage.length){
+						storage[i].removepageNum();
+						i++;
+					}
 				}
-				}
-				
-
-			
-		});
+			}
+		}
+		);
 		
+		/**
+		 * 
+		 */
 		generate.addActionListener(new ActionListener(){
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// Need to figure out why the getItem isn't working correctly.
+				output.setEditable(true);
+				output.setText("Hello world");
 				
-			}
-			
+				if(isFootnote.isSelected()){
+				
+					}
+				
+				output.setEditable(false);
+				}	
 		});
 
 		bookPanel = book.returnJPanel(BOOK);
@@ -168,13 +165,18 @@ public class ChicagoCitationGUI implements ItemListener{
 	}
 
 	@Override
+	/**
+	 * 
+	 */
 	public void itemStateChanged(ItemEvent event) {
 		cl = (CardLayout) citationTypes.getLayout();
 		cl.show(citationTypes, (String) event.getItem());
+		currType = cb.getSelectedItem().toString();
+		
 	}
-	
-
-
+/**
+ * 
+ */
 	   private static void createAndShowGUI() {
 	        //Create and set up the window.
 	        JFrame frame = new JFrame("Bibliography Demo");
@@ -190,11 +192,13 @@ public class ChicagoCitationGUI implements ItemListener{
 	        frame.pack();
 	        frame.setVisible(true);
 	    }
-
+/**
+ * 
+ * @param args
+ */
 	    public static void main(String[] args) {
 	        /* Use an appropriate Look and Feel */
 	        try {
-	            //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 	            UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
 
 
