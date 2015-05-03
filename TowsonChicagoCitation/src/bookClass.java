@@ -46,6 +46,7 @@ public class bookClass {
 	
 	JLabel pageNumber = new JLabel("Pages");
 	JTextField pageNum = new JTextField("i", 5);
+	boolean x = false;
 	
 	SpringLayout spring = new SpringLayout();
 
@@ -103,8 +104,11 @@ public class bookClass {
 			bookBase.add(journalN);
 			bookBase.add(date);
 			bookBase.add(publishDate);
+			bookBase.add(pageNum); //textfield
+			bookBase.add(pageNumber); //label
 			
 			if(getType() == "Online Journal"){
+				URL.setText("URL or DOI");
 				bookBase.add(URL);
 				bookBase.add(URLText);
 				
@@ -136,15 +140,23 @@ public class bookClass {
 			} 
 			
 			if (getType() == "Chapter In Book"){
-				bookBase.add(titleOfArticle);
 				articleTitle = new JTextField("g",FIELDLENGTH);
+				
+				bookBase.add(titleOfArticle);
 				bookBase.add(articleTitle);
+				bookBase.add(pageNum); //textfield
+				bookBase.add(pageNumber); //label
 				
 				storage+="a ";
 			}
 			
 			if (getType() == "Encyclopedia"){
 				titleOfBook.setText("Encyclopedia");
+				titleOfArticle.setText("Entry Name:");
+				articleTitle = new JTextField("g",FIELDLENGTH);
+				
+				bookBase.add(articleTitle);
+				bookBase.add(titleOfArticle);
 				
 				storage+="a ";
 			}
@@ -152,17 +164,19 @@ public class bookClass {
 		} 
 		
 		if (getType() == "Newspaper" || getType() == "Website"){
-			bookBase.add(URL);
-			bookBase.add(URLText);
-			bookBase.add(titleOfArticle);
 			titleOfArticle.setText("Article");
 			articleTitle = new JTextField("g",FIELDLENGTH);
 			bookBase.add(articleTitle);
-			
+			date = new JLabel("Published on:");
+			publishDate = new JTextField("Summer",10);
+
+			bookBase.add(date);
+			bookBase.add(publishDate);
+			bookBase.add(URL);
+			bookBase.add(URLText);
+			bookBase.add(titleOfArticle);
+
 			titleOfBook.setText((getType()=="Newspaper")? "Newspaper":"Website");
-			
-			publishDate = new JTextField("",10);
-			date = new JLabel("Published On");
 			
 			storage+="u d a ";
 		}
@@ -189,7 +203,8 @@ public class bookClass {
 		spring.putConstraint(SpringLayout.WEST, year, 400, SpringLayout.WEST, author);		
 		spring.putConstraint(SpringLayout.SOUTH, publishYear, 20, SpringLayout.SOUTH, author);
 		spring.putConstraint(SpringLayout.WEST, publishYear, 400, SpringLayout.WEST, author);
-		
+	
+
 
 		if(storage.contains("b")){ //sets up book component
 			spring.putConstraint(SpringLayout.SOUTH, publisher, 60, SpringLayout.WEST, author);
@@ -216,12 +231,20 @@ public class bookClass {
 			spring.putConstraint(SpringLayout.SOUTH, journalN, 65, SpringLayout.SOUTH, author);
 			spring.putConstraint(SpringLayout.WEST, journalN, 240, SpringLayout.WEST, author);
 			
+			
 		} 
 		
 		if (storage.contains("a")){ //sets up article title component
 			spring.putConstraint(SpringLayout.SOUTH, titleOfArticle, 105, SpringLayout.WEST, author);
 			spring.putConstraint(SpringLayout.SOUTH, articleTitle, 125, SpringLayout.WEST, author);
 			spring.putConstraint(SpringLayout.WEST, articleTitle, 10, SpringLayout.WEST, author);
+			
+			spring.putConstraint(SpringLayout.SOUTH, pageNumber, 105, SpringLayout.WEST, author);
+			spring.putConstraint(SpringLayout.WEST, pageNumber, 190, SpringLayout.WEST, author);
+			
+			spring.putConstraint(SpringLayout.SOUTH, pageNum, 125, SpringLayout.WEST, author);
+			spring.putConstraint(SpringLayout.WEST, pageNum, 190, SpringLayout.WEST, author);
+
 		}
 		
 		if (storage.contains("d")){ //sets up date component
@@ -245,6 +268,23 @@ public class bookClass {
 		}
 		
 	}
+	
+	public void setupFootnote(boolean x){
+		if(x == true)
+		{
+			bookBase.add(pageNum); //textfield
+			bookBase.add(pageNumber); //label
+		
+			spring.putConstraint(SpringLayout.SOUTH, pageNumber, 105, SpringLayout.WEST, author);
+			spring.putConstraint(SpringLayout.WEST, pageNumber, 190, SpringLayout.WEST, author);
+		
+			spring.putConstraint(SpringLayout.SOUTH, pageNum, 125, SpringLayout.WEST, author);
+			spring.putConstraint(SpringLayout.WEST, pageNum, 190, SpringLayout.WEST, author);
+		} else {
+			bookBase.remove(pageNum);
+			bookBase.remove(pageNumber);
+		}
+	}
 /**
  * 		
  */
@@ -254,6 +294,7 @@ public class bookClass {
 		lName.setText("");
 		title.setText("");
 		publishYear.setText("");
+		pageNum.setText("");
 		
 		if(storage.contains("b")){
 			publisherName.setText("");
@@ -274,35 +315,14 @@ public class bookClass {
 		}
 		
 		if(storage.contains("e")){
-			editorOrTranslator.setText("");
+			editorTranslator.setText("");
 		}
 		
 		if(storage.contains("u")){
 			URLText.setText("");
 		}
 	}
-/**
- * 
- */
-	public void setUppageNum(){
-			bookBase.add(pageNum); //textfield
-			bookBase.add(pageNumber); //label
-		
-			spring.putConstraint(SpringLayout.SOUTH, pageNumber, 105, SpringLayout.WEST, author);
-			spring.putConstraint(SpringLayout.WEST, pageNumber, 190, SpringLayout.WEST, author);
-			
-			spring.putConstraint(SpringLayout.SOUTH, pageNum, 125, SpringLayout.WEST, author);
-			spring.putConstraint(SpringLayout.WEST, pageNum, 190, SpringLayout.WEST, author);
 
-		}
-/**
- * 
- */
-	public void removepageNum(){
-
-			bookBase.remove(pageNum);
-			bookBase.remove(pageNumber);
-	}
 /**
  * 	
  * @param s
@@ -326,75 +346,109 @@ public class bookClass {
 	 * @param b
 	 * @return
 	 */
-	public String generateFootCitation(boolean b){
-		String cite = "";
-		if(mInit.getText()==""){		
-			cite+=fName.getText()+" "+lName.getText()+", ";
-		}else
-			cite+=fName.getText()+" "+mInit.getText()+". "+lName.getText()+", ";
-
+	public String generateCitation(boolean b){
+		String cite ="";
+		String s = "";
+		
+		if(b == false){ //if it is not a footnote
+			
+			if(!mInit.equals("")){
+				s = lName.getText()+", "+fName.getText()+" "+mInit.getText()+". ";
+				cite+=s;
+			}else{
+				s = lName.getText()+", "+fName.getText()+". ";
+				cite+=s;
+			}
+		}else{ //if it is a footnote
+			if(!mInit.equals("")){
+				s = fName.getText()+" "+mInit.getText()+". "+lName.getText()+", ";
+				cite+=s;
+			}else{
+				s = fName.getText()+" "+lName.getText()+", ";
+				cite+=s;
+			}
+		}
+		
 		if(getType() == "Chapter In Book"){ //if the type is a chapter in a book
 			if(b == false){
+				cite+="\""+articleTitle.getText()+".\" "+" In "+title.getText()+
+						", "+pageNum.getText()+". "+publishCity.getText()+": "+publisherName.getText()+", "
+						+publishYear.getText()+". ";
 				
-			}else{
-				cite+="\""+articleTitle.getText()+",\" in "+title.getText()+
-						" ("+publishCity.getText()+":"+publisher.getText()+", "
-						+publishYear.getText()+"), ";
+			}else if(b==true){
+				cite+="\""+articleTitle.getText()+",\" "+" in "+title.getText()+
+						" ("+publishCity.getText()+": "+publisherName.getText()+", "
+						+publishYear.getText()+"), "+pageNum.getText()+".";
 			}
 		} else if(getType() == "Newspaper"){ //if the type is a newspaper
 			if(b == false){
-				
-			}else{
 				cite+="\""+articleTitle.getText()+",\" "+title.getText()+", "+ 
 						publishDate.getText()+", "+publishYear.getText()+". "+
-						URLText.getText()+"."+pageNumber.getText()+". ";
+						URLText.getText();
+			}else{
+				cite+="\""+articleTitle.getText()+",\" "+title.getText()+", "+ 
+						publishDate.getText()+", "+publishYear.getText()+", "+
+						URLText.getText()+"."+pageNum.getText()+". ";
 			}
 		} else if(getType() == "Website"){ //if the type is a website
 			if(b == false){
-				
+				cite+="\""+articleTitle.getText()+".\" "+title.getText()+". Last modified "+ 
+						publishDate.getText()+", "+publishYear.getText()+". "+
+						URLText.getText()+".";
+
 			}else{
 				cite+="\""+articleTitle.getText()+",\" "+title.getText()+", last modified "+
 						publishDate.getText()+", "+publishYear.getText()+". "+
-						URLText.getText()+"."+pageNumber.getText()+". ";
+						URLText.getText()+".";
 			}
 					
 		} else if(getType() == "Book with Editor/Translator"){ //if the type has an editor/translator
 			if(b == false){
-				
+				cite+=title.getText()+". Edited by "+editorTranslator.getText()+". "+publishCity.getText()+": "+publisherName.getText()+", "
+						+publishYear.getText()+". ";
 			}else{
-			cite+="ed.,"+title.getText()+" ("+publishCity.getText()+":"+publisher.getText()+", "
-					+publishYear.getText()+"), "+pageNumber.getText()+". ";
+				cite+=title.getText()+". ed. "+editorTranslator.getText()+" ("+publishCity.getText()+": "+publisherName.getText()+", "
+						+publishYear.getText()+"), "+pageNum.getText()+". ";
 			}
 		} else if(getType() == "Encyclopedia"){	//if the type is an encyclopedia entry
 			if(b == false){
-				
+				cite+="\""+articleTitle.getText()+".\" In "+title.getText()+
+						". "+publishCity.getText()+": "+publisherName.getText()+", "
+						+publishYear.getText()+"), ";
 			}else{
-			cite+="\""+articleTitle.getText()+",\" In "+title.getText()+
-					" ("+publishCity.getText()+":"+publisher.getText()+", "
-					+publishYear.getText()+"), "+pageNumber.getText()+". ";
+				cite+="\""+articleTitle.getText()+",\" In "+title.getText()+
+						" ("+publishCity.getText()+": "+publisherName.getText()+", "
+						+publishYear.getText()+"), "+pageNum.getText()+". ";
 			}
-		}else if(getType() == "Online Journal"){ //if the type is an online journal
+		} else if(getType() == "Online Journal"){ //if the type is an online journal
+			String url = (URLText.getText().contains("http"))? URLText.getText():"doi "+URLText.getText();
 			if(b == false){
-				
+				cite+="\""+articleTitle.getText()+".\" "+title.getText()+" "+journalV.getText()+", no."+journalN.getText()+
+				" ("+publishDate.getText()+" "+publishYear.getText()+"): "+pageNum.getText()+". "+url;
 			}else{
-			cite+="\""+articleTitle.getText()+",\" in "+title.getText()+" "+journalV.getText()+", no."+journalN.getText()+
-					"("+publishYear.getText()+"): "+pageNumber.getText()+". ";
+				cite+="\""+articleTitle.getText()+",\" "+title.getText()+" "+journalV.getText()+", no."+journalN.getText()+
+						" ("+publishDate.getText()+" "+publishYear.getText()+"): "+pageNum.getText()+". "+url+".";
 			}
-		}else if(getType() == "Offline Journal"){ //if the type is an offline journal
+		} else if(getType() == "Offline Journal"){ //if the type is an offline journal
 			if(b == false){
-				
+				cite+="\""+articleTitle.getText()+".\" "+title.getText()+" "+journalV.getText()+", no."+journalN.getText()+
+				" ("+publishYear.getText()+"): "+pageNum.getText()+". ";
 			}else{
-			cite+="\""+articleTitle.getText()+",\" in "+title.getText()+" "+journalV.getText()+", no."+journalN.getText()+
-					"("+publishYear.getText()+"): "+pageNumber.getText()+". "+URLText.getText();
+				cite+="\""+articleTitle.getText()+",\" in "+title.getText()+" "+journalV.getText()+", no."+journalN.getText()+
+						" ("+publishYear.getText()+"): "+pageNum.getText()+". ";
 			}
-		}else { //if the type is nothing other than a regular book
+		} else if(getType() == "Book"){ //if the type is nothing other than a regular book
 			if(b == false){
-				
+				cite+=title.getText()+". "+publishCity.getText()+": "+publisherName.getText()+", "
+						+publishYear.getText()+".";
 			}else{
-			cite+=title.getText()+" ("+publishCity.getText()+":"+publisher.getText()+", "
-				+publishYear.getText()+"), ";
+				cite+=title.getText()+" ("+publishCity.getText()+": "+publisherName.getText()+", "
+						+publishYear.getText()+"), "+pageNum.getText()+".";
 			}
 		}
+		else
+			return "ERROR";
+		
 		return cite;
 	}
 	

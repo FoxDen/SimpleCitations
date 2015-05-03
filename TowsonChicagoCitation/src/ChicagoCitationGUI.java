@@ -66,9 +66,12 @@ public class ChicagoCitationGUI implements ItemListener{
 		citationBoxPane.add(cb);
 		
 		isFootnote = new JCheckBox("Is this a footnote?");
+			isFootnote.setSelected(false);
 		generate = new JButton("Generate");
 		clear = new JButton("Clear");
-		output = new JTextArea(2,30);
+		output = new JTextArea(2,40);
+			output.setLineWrap(true);
+			output.setEditable(false);
 		
 		bottomBit.add(isFootnote);
 		bottomBit.add(generate);
@@ -88,7 +91,6 @@ public class ChicagoCitationGUI implements ItemListener{
 					storage[i].clear();
 					i++;
 				}
-				System.out.println(currType);
 			}
 
 		});
@@ -101,22 +103,16 @@ public class ChicagoCitationGUI implements ItemListener{
 			public void itemStateChanged(ItemEvent e) {
 				if(e.getStateChange()==ItemEvent.SELECTED)
 				{
-					int i = 0;
-					
-					while(i<storage.length){
-						storage[i].setUppageNum();
-						i++;
-					}
-				}
- 
-				if(e.getStateChange()==ItemEvent.DESELECTED)
+					storage[0].setupFootnote(true);
+					storage[2].setupFootnote(true);
+					storage[5].setupFootnote(true);
+					storage[6].setupFootnote(true);
+				} else if(e.getStateChange()==ItemEvent.DESELECTED)
 				{
-					int i = 0;
-					
-					while(i<storage.length){
-						storage[i].removepageNum();
-						i++;
-					}
+					storage[0].setupFootnote(false);
+					storage[2].setupFootnote(false);
+					storage[5].setupFootnote(false);
+					storage[6].setupFootnote(false);
 				}
 			}
 		}
@@ -130,12 +126,47 @@ public class ChicagoCitationGUI implements ItemListener{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				output.setEditable(true);
-				output.setText("Hello world");
-				
-				if(isFootnote.isSelected()){
-				
+
+				if(isFootnote.isSelected()==true){
+					if(currType.equals(BOOK)){
+						output.setText(book.generateCitation(true));
+					} else if(currType.equals(CHAPTER)){
+						output.setText(chapter.generateCitation(true));
+					} else if(currType.equals(EDITOR)){
+						output.setText(editors.generateCitation(true));
+					} else if(currType.equals(ENCYCLOPEDIA)){
+						output.setText(encyclopedia.generateCitation(true));
+					} else if(currType.equals(WEBSITE)){
+						output.setText(website.generateCitation(true));
+					} else if(currType.equals(NEWSPAPER)){
+						output.setText(newspaper.generateCitation(true));
+					} else if(currType.equals(OFFLINEJOURNAL)){
+						output.setText(offJournal.generateCitation(true));
+					} else if(currType.equals(ONLINEJOURNAL)){
+						output.setText(onJournal.generateCitation(true));
+					} else
+						System.out.println("Error");
 					}
-				
+				else if(isFootnote.isSelected()==false){
+					if(currType.equals(BOOK)){
+						output.setText(book.generateCitation(false));
+					} else if(currType.equals(CHAPTER)){
+						output.setText(chapter.generateCitation(false));
+					} else if(currType.equals(EDITOR)){
+						output.setText(editors.generateCitation(false));
+					} else if(currType.equals(ENCYCLOPEDIA)){
+						output.setText(encyclopedia.generateCitation(false));
+					} else if(currType.equals(WEBSITE)){
+						output.setText(website.generateCitation(false));
+					} else if(currType.equals(NEWSPAPER)){
+						output.setText(newspaper.generateCitation(false));
+					} else if(currType.equals(OFFLINEJOURNAL)){
+						output.setText(offJournal.generateCitation(false));
+					} else if(currType.equals(ONLINEJOURNAL)){
+						output.setText(onJournal.generateCitation(false));
+					} else
+						System.out.println("Error");
+				}
 				output.setEditable(false);
 				}	
 		});
