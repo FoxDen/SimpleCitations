@@ -50,21 +50,23 @@ public class ChicagoCitationGUI implements ItemListener{
 	private JButton clear;
 	    
 	/**
-	 * 
+	 * Sets up the components for the main window.
 	 * @param container
 	 */
 	public void addComponent(Container container){
-		JPanel citationBoxPane = new JPanel();
+		JPanel citationBoxPane = new JPanel(); //The main panel to display the different components.
 		JPanel bottomBit = new JPanel(new FlowLayout());
 		JPanel bB = new JPanel();
 		JPanel Bb = new JPanel(new BorderLayout());		
-
+		
+		//Stores the string representations of the different citation types.
 		String citationItems[] = {BOOK, CHAPTER, EDITOR, ONLINEJOURNAL, OFFLINEJOURNAL, WEBSITE, ENCYCLOPEDIA, NEWSPAPER};
 		cb = new JComboBox<String>(citationItems);
 		cb.setEditable(false);
 		cb.addItemListener(this);
 		citationBoxPane.add(cb);
 		
+		//sets up footnote, data clearing & data output components.
 		isFootnote = new JCheckBox("Is this a footnote?");
 			isFootnote.setSelected(false);
 		generate = new JButton("Generate");
@@ -73,15 +75,16 @@ public class ChicagoCitationGUI implements ItemListener{
 			output.setLineWrap(true);
 			output.setEditable(false);
 		
+		//bottomBit adds all of the interactable components together.
 		bottomBit.add(isFootnote);
 		bottomBit.add(generate);
 		bottomBit.add(clear);
-		bB.add(output);
+		bB.add(output);//This panel then takes in the output box for the citation to show up in.
+		//These two panels are then added to the Bb panel, which will go into the main one.
 		Bb.add(bB,BorderLayout.PAGE_START);
 		Bb.add(bottomBit,BorderLayout.PAGE_END);
-		
 		/**
-		 * 
+		 * Adds an action listener to run the "Clear" method for all objects of type bookClass.
 		 */
 		clear.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
@@ -96,7 +99,7 @@ public class ChicagoCitationGUI implements ItemListener{
 		});
 		
 		/**
-		 * 
+		 * Adds an item listener to the footnote checkbox. Selecting it means the entire citation should be in footnote format. Deselecting it means it will not be.
 		 */
 		isFootnote.addItemListener(new ItemListener(){
 
@@ -119,14 +122,14 @@ public class ChicagoCitationGUI implements ItemListener{
 		);
 		
 		/**
-		 * 
+		 * Adds an action listener to the generate button to run the generateCitation method in the bookClass. Depending on the panel, a different output will be produced.
 		 */
 		generate.addActionListener(new ActionListener(){
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				output.setEditable(true);
-
+				output.setEditable(true);//sets the output to be editable so the text may be set.
+				//if the user wants it to be a footnote...
 				if(isFootnote.isSelected()==true){
 					if(currType.equals(BOOK)){
 						output.setText(book.generateCitation(true));
@@ -147,6 +150,7 @@ public class ChicagoCitationGUI implements ItemListener{
 					} else
 						System.out.println("Error");
 					}
+				//if the user does not want it to be a footnote...
 				else if(isFootnote.isSelected()==false){
 					if(currType.equals(BOOK)){
 						output.setText(book.generateCitation(false));
@@ -167,10 +171,10 @@ public class ChicagoCitationGUI implements ItemListener{
 					} else
 						System.out.println("Error");
 				}
-				output.setEditable(false);
+				output.setEditable(false);//the ability for the output being able to set text is turned off again.
 				}	
 		});
-
+		//The info regarding the different panels is stored here. New panels are created using the info from bookClass.returnJPanel().
 		bookPanel = book.returnJPanel(BOOK);
 		booksWithEditorsPanel = editors.returnJPanel(CHAPTER);
 		bookChaptersPanel = chapter.returnJPanel(EDITOR);
@@ -180,6 +184,7 @@ public class ChicagoCitationGUI implements ItemListener{
 		websitePanel = website.returnJPanel(WEBSITE);
 		newspaperPanel = newspaper.returnJPanel(NEWSPAPER);
 
+		//Here, these panels are stored into the main panel to be displayed, citationTypes.
 		citationTypes = new JPanel(cl);
 		citationTypes.add(bookPanel, BOOK);
 		citationTypes.add(bookChaptersPanel, CHAPTER);
@@ -197,20 +202,20 @@ public class ChicagoCitationGUI implements ItemListener{
 
 	@Override
 	/**
-	 * 
+	 * Notes whenever the combobox has been changed.
 	 */
 	public void itemStateChanged(ItemEvent event) {
 		cl = (CardLayout) citationTypes.getLayout();
 		cl.show(citationTypes, (String) event.getItem());
-		currType = cb.getSelectedItem().toString();
+		currType = cb.getSelectedItem().toString();//sets the currType string to store the string representation of the type of media just selected.
 		
 	}
 /**
- * 
+ * Created and shows the GUI's frame, size and other attributes.
  */
 	   private static void createAndShowGUI() {
 	        //Create and set up the window.
-	        JFrame frame = new JFrame("Bibliography Demo");
+	        JFrame frame = new JFrame("Towson Chicago Bibliography for History Majors");
 	        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	        Dimension d = new Dimension(600,300);
 	        frame.getContentPane().setPreferredSize(d);
@@ -224,7 +229,7 @@ public class ChicagoCitationGUI implements ItemListener{
 	        frame.setVisible(true);
 	    }
 /**
- * 
+ * Main method, putting everything together.
  * @param args
  */
 	    public static void main(String[] args) {

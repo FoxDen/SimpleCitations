@@ -5,8 +5,7 @@ import javax.swing.SpringLayout;
 
 /*
  ***************************TO DO***************************
- *add tooltips
- *add comments
+	*FUTURE: Set up an output to a text file whenever the user "Clears" the data?
  ***********************************************************
  */
 
@@ -45,7 +44,7 @@ public class bookClass {
 	public JTextField journalN;
 	
 	JLabel pageNumber = new JLabel("Pages");
-	JTextField pageNum = new JTextField("i", 5);
+	JTextField pageNum = new JTextField("", 5);
 	boolean x = false;
 	
 	SpringLayout spring = new SpringLayout();
@@ -54,24 +53,27 @@ public class bookClass {
 		type = t;
 	}
 /**
- * 	
+ * 	Will set up the different panels necessary for the different kinds of citations. Returns nothing.
  */
 	public void bookComponents(){
-		
+		//The initial components of the panel.
 		bookBase = new JPanel();
 		bookBase.setLayout(spring);		
 		
 		author = new JLabel("Author");
-		fName = new JTextField("a",FIELDLENGTH);
-		lName = new JTextField("b",FIELDLENGTH);
-		mInit = new JTextField("c",1);
+		fName = new JTextField("",FIELDLENGTH);
+		fName.setToolTipText("First Name of Author");
+		lName = new JTextField("",FIELDLENGTH);
+		lName.setToolTipText("Last Name of Author");
+		mInit = new JTextField("",1);
+		mInit.setToolTipText("Middle Inital of Author");
 		titleOfBook = new JLabel("Title");
-		year = new JLabel("Year");
-		publishYear = new JTextField("1999", 4);
+		year = new JLabel("Year of Publication");
+		publishYear = new JTextField("", 4);
 		
-		title = new JTextField(getType(),FIELDLENGTH);
-		publisherName = new JTextField("e",FIELDLENGTH);
-		URLText = new JTextField("h",FIELDLENGTH);
+		title = new JTextField("",FIELDLENGTH);
+		publisherName = new JTextField("",FIELDLENGTH);
+		URLText = new JTextField("",FIELDLENGTH);
 		URL = new JLabel("URL");
 				
 		bookBase.add(fName);
@@ -84,16 +86,17 @@ public class bookClass {
 		bookBase.add(year);
 		
 		titleOfArticle = new JLabel("Chapter");
-		articleTitle = new JTextField("Article",FIELDLENGTH);
+		articleTitle = new JTextField("",FIELDLENGTH);
 		
+		//If the type here is either an online journal or an offline journal
 		if(getType() == "Online Journal" || getType() == "Offline Journal"){
 			journalVolume = new JLabel("Vol.");
 			titleOfBook.setText("Journal");
-			journalNumber = new JLabel("Number");
-			journalV = new JTextField("Vol", 3);
-			journalN = new JTextField("Num", 3);
+			journalNumber = new JLabel("No.");
+			journalV = new JTextField("", 3);
+			journalN = new JTextField("", 3);
 			date = new JLabel("Month/Season published");
-			publishDate = new JTextField("Summer",10);
+			publishDate = new JTextField("",10);
 			titleOfArticle.setText("Article");
 		
 			bookBase.add(titleOfArticle);
@@ -104,8 +107,8 @@ public class bookClass {
 			bookBase.add(journalN);
 			bookBase.add(date);
 			bookBase.add(publishDate);
-			bookBase.add(pageNum); //textfield
-			bookBase.add(pageNumber); //label
+			bookBase.add(pageNum); 
+			bookBase.add(pageNumber); 
 			
 			if(getType() == "Online Journal"){
 				URL.setText("URL or DOI");
@@ -117,11 +120,11 @@ public class bookClass {
 			storage+="a v d p ";
 
 		} 
-		
+		//If the type here is a book, a chapter in the book, or a book with an editor or translator instead.
 		if(getType() == "Chapter In Book" || getType() == "Book" || getType() == "Book with Editor/Translator" || getType() == "Encyclopedia"){
 			publisher = new JLabel("Publisher");
 			city = new JLabel("City");
-			publishCity = new JTextField("City", FIELDLENGTH);
+			publishCity = new JTextField("", FIELDLENGTH);
 			publisherName = new JTextField("", FIELDLENGTH);
 			bookBase.add(publisherName);
 			bookBase.add(publishCity);
@@ -140,12 +143,12 @@ public class bookClass {
 			} 
 			
 			if (getType() == "Chapter In Book"){
-				articleTitle = new JTextField("g",FIELDLENGTH);
+				articleTitle = new JTextField("",FIELDLENGTH);
 				
 				bookBase.add(titleOfArticle);
 				bookBase.add(articleTitle);
-				bookBase.add(pageNum); //textfield
-				bookBase.add(pageNumber); //label
+				bookBase.add(pageNum); 
+				bookBase.add(pageNumber);
 				
 				storage+="a ";
 			}
@@ -153,7 +156,7 @@ public class bookClass {
 			if (getType() == "Encyclopedia"){
 				titleOfBook.setText("Encyclopedia");
 				titleOfArticle.setText("Entry Name:");
-				articleTitle = new JTextField("g",FIELDLENGTH);
+				articleTitle = new JTextField("",FIELDLENGTH);
 				
 				bookBase.add(articleTitle);
 				bookBase.add(titleOfArticle);
@@ -162,13 +165,13 @@ public class bookClass {
 			}
 
 		} 
-		
+		//If the type here is a newspaper or a website.
 		if (getType() == "Newspaper" || getType() == "Website"){
 			titleOfArticle.setText("Article");
-			articleTitle = new JTextField("g",FIELDLENGTH);
+			articleTitle = new JTextField("",FIELDLENGTH);
 			bookBase.add(articleTitle);
 			date = new JLabel("Published on:");
-			publishDate = new JTextField("Summer",10);
+			publishDate = new JTextField("",10);
 
 			bookBase.add(date);
 			bookBase.add(publishDate);
@@ -182,10 +185,10 @@ public class bookClass {
 		}
 	}
 /**
- * 	
+ * 	Sets up the positioning of the different panels.
  */
 	public void bookBaseSetUp(){
-		//sets up things in general
+		//General setup
 		spring.putConstraint(SpringLayout.SOUTH, fName, 20, SpringLayout.SOUTH, author);
 		spring.putConstraint(SpringLayout.WEST, fName, 10, SpringLayout.WEST, author);
 
@@ -269,11 +272,15 @@ public class bookClass {
 		
 	}
 	
+	/**
+	 * Sets up the page number label and textfield for if the user wants to create a footnote.
+	 * @param x
+	 */
 	public void setupFootnote(boolean x){
 		if(x == true)
 		{
-			bookBase.add(pageNum); //textfield
-			bookBase.add(pageNumber); //label
+			bookBase.add(pageNum); 
+			bookBase.add(pageNumber); 
 		
 			spring.putConstraint(SpringLayout.SOUTH, pageNumber, 105, SpringLayout.WEST, author);
 			spring.putConstraint(SpringLayout.WEST, pageNumber, 190, SpringLayout.WEST, author);
@@ -286,7 +293,7 @@ public class bookClass {
 		}
 	}
 /**
- * 		
+ * 	Clears all of the data in the textfields.
  */
 	public void clear(){
 		fName.setText("");
@@ -324,8 +331,8 @@ public class bookClass {
 	}
 
 /**
- * 	
- * @param s
+ * 	Returns a panel representation of the component in question.
+ * @param s 
  * @return
  */
 	public JPanel returnJPanel(String s){
@@ -334,7 +341,8 @@ public class bookClass {
 		return bookBase;
 	}
 /**
- * 
+ * Returns the string representing the type of citation being used.
+ * Ex: "book", "newspaper".
  * @return
  */
 	public String getType() {
@@ -343,13 +351,15 @@ public class bookClass {
 	
 	/**
 	 * 
-	 * @param b
+	 * @param b determines if the generated citation is one for a footnote or not.
 	 * @return
 	 */
 	public String generateCitation(boolean b){
-		String cite ="";
-		String s = "";
-		
+		String cite ="";//the string to be returned.
+		String s = ""; //stores the first name, last name and middle initial of the author.
+		/*
+		 * This sets up the initial data about the author name.
+		 */
 		if(b == false){ //if it is not a footnote
 			
 			if(!mInit.equals("")){
@@ -369,6 +379,7 @@ public class bookClass {
 			}
 		}
 		
+		//The main setup for creating the citation string.
 		if(getType() == "Chapter In Book"){ //if the type is a chapter in a book
 			if(b == false){
 				cite+="\""+articleTitle.getText()+".\" "+" In "+title.getText()+
